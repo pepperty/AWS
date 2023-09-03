@@ -48,7 +48,7 @@ def measure():
         return -1
     return distance
 
-
+print ("")
 if __name__ == '__main__':
     try:
         while True:
