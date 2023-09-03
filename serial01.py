@@ -46,5 +46,4 @@ while True:
       for dataL in log_records:
           writer.writerow(dataL)
     log_records = []
-
-  print(f"Log data appended to {csv_filename}")
+    print (dataS)
