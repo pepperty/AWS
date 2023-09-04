@@ -141,5 +141,5 @@ if __name__ == "__main__":
     distance = board.getDistance()
     print_distance(distance)
     #Delay time < 0.6s
-    time.sleep(0.3) 
+    time.sleep(1) 
 
