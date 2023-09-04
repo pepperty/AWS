@@ -115,8 +115,8 @@ class DFRobot_A02_Distance:
     else:
       self.last_operate_status = self.STA_ERR_DATA
     return self.distance
-board = Board()
 
+board = DFRobot_A02_Distance()
 def print_distance(dis):
   if board.last_operate_status == board.STA_OK:
     print("Distance %d mm" %dis)
