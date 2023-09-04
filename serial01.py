@@ -4,6 +4,7 @@ import datetime
 
 output = ""
 
+
 # ser = serial.Serial('/dev/ttyUSB0', 9600, 8, 'N', 1, timeout=1)
 ser = serial.Serial('COM6', 9600, 8, 'N', 1, timeout=1)
 
