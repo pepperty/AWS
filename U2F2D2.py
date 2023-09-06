@@ -41,6 +41,15 @@ GPIO.output(IO_TRIG02, False)
 GPIO.output(IO_REL01, False)
 GPIO.output(IO_REL02, False)
 
+# GPIO.output(IO_EXC01, True)
+# GPIO.output(IO_EXC02, True)
+# GPIO.output(IO_DET01, True)
+# GPIO.output(IO_DET02, True)
+# GPIO.output(IO_TRIG01, True)
+# GPIO.output(IO_TRIG02, True)
+# GPIO.output(IO_REL01, True)
+# GPIO.output(IO_REL02, True)
+
 
 # # This function measures a distance
 # def measure():
