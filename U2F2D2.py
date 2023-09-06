@@ -32,7 +32,7 @@ GPIO.setup(IO_TRIG02, GPIO.OUT)
 GPIO.setup(IO_REL01, GPIO.OUT)
 GPIO.setup(IO_REL02, GPIO.OUT)
 
-out  = 1 # test
+out  = 0 # test
 if out == 0:
     GPIO.output(IO_EXC01, False)
     GPIO.output(IO_EXC02, False)
