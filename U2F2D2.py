@@ -5,14 +5,14 @@ import time
 # Define GPIO to use on Pi
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-IO_EXC01 = 23
-IO_EXC02= 24
-IO_DET01 = 25
-IO_DET02 = 8
-IO_TRIG01= 7
-IO_TRIG02 = 12
-IO_REL01 = 16
-IO_REL02 = 20
+IO_EXC01 = 18
+IO_EXC02= 23
+IO_DET01 = 24
+IO_DET02 = 25
+IO_TRIG01= 8
+IO_TRIG02 = 7
+IO_REL01 = 12
+IO_REL02 = 16
 
 # ULtrasonic trigger time
 TRIGGER_TIME = 0.00001
