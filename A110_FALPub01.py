@@ -16,8 +16,8 @@
  '''
  # PJ:XT PYT_BPU_Tank
 
-#from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
-import boto3
+from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
+
 import logging
 import time
 import json
@@ -46,51 +46,121 @@ GPIO.setup(IO_13_TB, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 #     subprocess.call(['killall', 'node-red'])
 #     subprocess.Popen(['node-red'])
 
-# Configure AWS IoT endpoint
-iot_client = boto3.client('LIV24', region_name='ap-southeast-1')
+AllowedActions = ['both', 'publish', 'subscribe']
 
-# Path to your device's certificates
-root_ca_path = 'certsP/AmazonRootCA1.pem'
-private_key_path = 'certsP/private.pem.key'
-certificate_path = 'certsP/device.pem.crt'
+# Custom MQTT message callback
+def customCallback(client, userdata, message):
+    print("Received a new message: ")
+    print(message.payload)
+    print("from topic: ")
+    print(message.topic)
+    print("--------------\n\n")
 
-# Connect to AWS IoT
-iot_client.create_keys_and_certificate(setAsActive=True)
-iot_client.attach_principal_policy(
-    policyName='Liv24Policy',
-    principal=iot_client.describe_endpoint()['a1x0dm3q26289z-ats.iot.ap-southeast-1.amazonaws.com']
-)
+# host = "aquiml1rupuga-ats.iot.ap-southeast-1.amazonaws.com"
+# rootCAPath = "certs/AmazonRootCA1.pem"
+# certificatePath = "certs/device.pem.crt"
+# privateKeyPath = "certs/private.pem.key"
 
+host = "a1x0dm3q26289z-ats.iot.ap-southeast-1.amazonaws.com"
+rootCAPath = "certsP/AmazonRootCA1.pem"
+certificatePath = "certsP/device.pem.crt"
+privateKeyPath = "certsP/private.pem.key"
+
+port = 8883
+useWebsocket = False
+clientId = "LIV24"
+topic = "iot/firealarm"
+
+if not useWebsocket and (not certificatePath or not privateKeyPath):
+    print("Missing credentials for authentication.")
+    exit(2)
+
+# Port defaults
+if useWebsocket and not port:  # When no port override for WebSocket, default to 443
+    port = 443
+if not useWebsocket and not port:  # When no port override for non-WebSocket, default to 8883
+    port = 8883
+
+# Configure logging
+logger = logging.getLogger("AWSIoTPythonSDK.core")
+logger.setLevel(logging.DEBUG)
+streamHandler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+streamHandler.setFormatter(formatter)
+logger.addHandler(streamHandler)
+
+# Init AWSIoTMQTTClient
+myAWSIoTMQTTClient = None
+if useWebsocket:
+    myAWSIoTMQTTClient = AWSIoTMQTTClient(clientId, useWebsocket=True)
+    myAWSIoTMQTTClient.configureEndpoint(host, port)
+    myAWSIoTMQTTClient.configureCredentials(rootCAPath)
+else:
+    myAWSIoTMQTTClient = AWSIoTMQTTClient(clientId)
+    myAWSIoTMQTTClient.configureEndpoint(host, port)
+    myAWSIoTMQTTClient.configureCredentials(rootCAPath, privateKeyPath, certificatePath)
+
+# AWSIoTMQTTClient connection configuration
+myAWSIoTMQTTClient.configureAutoReconnectBackoffTime(1, 32, 20)
+myAWSIoTMQTTClient.configureOfflinePublishQueueing(-1)  # Infinite offline Publish queueing
+myAWSIoTMQTTClient.configureDrainingFrequency(2)  # Draining: 2 Hz
+myAWSIoTMQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
+myAWSIoTMQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
+
+# Connect and subscribe to AWS IoT
+mode = 'publish'
+myAWSIoTMQTTClient.connect()
+if mode == 'both' or mode == 'subscribe':
+    myAWSIoTMQTTClient.subscribe(topic, 1, customCallback)
+time.sleep(2)
+
+def get_cpu_temperature():
+    try:
+        result = subprocess.check_output(["vcgencmd", "measure_temp"])
+        temperature_str = result.decode("utf-8")
+        temperature = float(temperature_str.split("=")[1].split("'")[0])
+        return temperature
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None
+
+# Publish to the same topic in a loop forever
+# Read data from JSON file
 with open('AWS\A110_FAL.json', 'r') as file:
     json_data1 = json.load(file)
 # print(json_data)
 if __name__ == '__main__':
     try:
         while True:
-            # print("################")
-            # print(json_data1['devices'][0]['tags'][2])
-            # print("################")
-            if GPIO.input(IO_05_AL) == 0:
-                json_data1['devices'][0]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY"
+            temperature = get_cpu_temperature()
+            if temperature is not None:
+                print(f"CPU Temperature: {temperature}°C")
             else:
-                json_data1['devices'][0]['tags'][2]['value']=""
-            if GPIO.input(IO_13_TB) == 0:
-                json_data1['devices'][0]['tags'][3]['value']="Trouble"
-            else: 
-                json_data1['devices'][0]['tags'][3]['value']=""
-            # messageJson1['devices']['tags']['value'] = str(35.00)
-            # Publish data to a specific AWS IoT topic
-            iot_client.publish(
-                topic='iot/firealarm',
-                qos=1,
-                payload=json.dumps(json_data1)
-            )
+                print("Failed to read CPU temperature.")
+
+            if mode == 'both' or mode == 'publish':
+                # print("################")
+                # print(json_data1['devices'][0]['tags'][2])
+                # print("################")
+                if GPIO.input(IO_05_AL) == 0:
+                    json_data1['devices'][0]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY"
+                else:
+                    json_data1['devices'][0]['tags'][2]['value']=""
+                if GPIO.input(IO_13_TB) == 0:
+                    json_data1['devices'][0]['tags'][3]['value']="Trouble"
+                else:
+                    json_data1['devices'][0]['tags'][3]['value']=""
+                messageJson1 = json.dumps(json_data1)
+                #messageJson1['devices']['tags']['value'] = str(35.00)
+                myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                if mode == 'publish':
+                    print('Published topic %s: %s\n' % (topic, messageJson1))
             time.sleep(30)
         # Reset by pressing CTRL + C
     except KeyboardInterrupt:
         print("Measurement stopped by User")
         GPIO.cleanup()
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        GPIO.cleanup()
+    # except Exception as e:
+    #     print(f"An error occurred: {e}")
+    #     GPIO.cleanup()
     GPIO.cleanup()
