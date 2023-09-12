@@ -143,6 +143,7 @@ if __name__ == '__main__':
                 json_data1['devices'][0]['tags'][0]['value']=temperature-12
             else:
                 #print("Failed to read CPU temperature.")
+                json_data1['devices'][0]['tags'][0]['value']=""
 
             if mode == 'both' or mode == 'publish':
                 # print("################")
@@ -162,18 +163,21 @@ if __name__ == '__main__':
                 if Alarm == 1:
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    print("###########################")
                     tlMill = int(time.time() * 1000)
                     Alarm = 2
                 elif Alarm == 2 and GPIO.input(IO_05_AL) != 0:
                     json_data1['devices'][1]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY_Restore"
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    print("###########################")
                     tlMill = int(time.time() * 1000)
                     json_data1['devices'][1]['tags'][2]['value']=""
                     Alarm = 3
                 if (trMill-tlMill)>30:
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    print("###########################")
                     tlMill = int(time.time() * 1000)
                 
 
