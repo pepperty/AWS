@@ -161,11 +161,11 @@ if __name__ == '__main__':
                     json_data1['devices'][1]['tags'][3]['value']=""
 
                 if Alarm == 1:
+                    Alarm = 2
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
                     print("11111111111111111111111111")
                     tlMill = int(time.time())
-                    Alarm = 2
                 elif Alarm == 2 and GPIO.input(IO_05_AL) != 0:
                     json_data1['devices'][1]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY_Restore"
                     messageJson1 = json.dumps(json_data1)
