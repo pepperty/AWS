@@ -134,8 +134,8 @@ with open('A110_FAL.json', 'r') as file:
 # print(json_data)
 if __name__ == '__main__':
     try:
+        Alarm = 0
         while True:
-            Alarm = 0
             time.sleep(1)
             temperature = get_cpu_temperature()
             if temperature is not None:
