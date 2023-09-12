@@ -89,13 +89,13 @@ if __name__ == '__main__':
             #     print("#")
             if GPIO.input(IO_01) == 0:
                 print("1")
-            if GPIO.input(IO_01) == 0:
+            if GPIO.input(IO_02) == 0:
                 print("2")
-            if GPIO.input(IO_01) == 0:
+            if GPIO.input(IO_03) == 0:
                 print("3")
-            if GPIO.input(IO_01) == 0:
+            if GPIO.input(IO_04) == 0:
                 print("4")
-            if GPIO.input(IO_01) == 0:
+            if GPIO.input(IO_05) == 0:
                 print("5")
             time.sleep(1)
         # Reset by pressing CTRL + C

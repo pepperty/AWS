@@ -31,8 +31,8 @@ import RPi.GPIO as GPIO
 # Define GPIO to use on Pi
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-IO_05_AL = 5 
-IO_13_TB = 13
+IO_05_AL = 13 
+IO_13_TB = 5
 
 GPIO.setup(IO_05_AL, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IO_13_TB, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -143,10 +143,12 @@ if __name__ == '__main__':
                 # print(json_data1['devices'][0]['tags'][2])
                 # print("################")
                 if GPIO.input(IO_05_AL) == 0:
+                    print("AL")
                     json_data1['devices'][0]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY"
                 else:
                     json_data1['devices'][0]['tags'][2]['value']=""
                 if GPIO.input(IO_13_TB) == 0:
+                    print("TB")
                     json_data1['devices'][0]['tags'][3]['value']="Trouble"
                 else:
                     json_data1['devices'][0]['tags'][3]['value']=""
