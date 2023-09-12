@@ -72,8 +72,12 @@ if __name__ == '__main__':
             # print("################")
             if GPIO.input(IO_05_AL) == 0:
                 json_data1['devices'][0]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY"
+            else:
+                json_data1['devices'][0]['tags'][2]['value']=""
             if GPIO.input(IO_13_TB) == 0:
                 json_data1['devices'][0]['tags'][3]['value']="Trouble"
+            else: 
+                json_data1['devices'][0]['tags'][3]['value']=""
             # messageJson1['devices']['tags']['value'] = str(35.00)
             # Publish data to a specific AWS IoT topic
             iot_client.publish(
