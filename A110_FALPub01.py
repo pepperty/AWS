@@ -34,8 +34,8 @@ GPIO.setwarnings(False)
 IO_05_AL = 13 
 IO_13_TB = 5
 
-trMill = 0
-tlMill = 0
+trMill = int(time.time())
+tlMill = int(time.time())
 
 GPIO.setup(IO_05_AL, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IO_13_TB, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -149,7 +149,7 @@ if __name__ == '__main__':
                 # print("################")
                 # print(json_data1['devices'][0]['tags'][2])
                 # print("################")
-                trMill = int(time.time() * 1000)
+                trMill = int(time.time())
                 if GPIO.input(IO_05_AL) == 0 and Alarm != 2:
                     Alarm = 1
                     json_data1['devices'][1]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY"
@@ -179,7 +179,6 @@ if __name__ == '__main__':
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
                     print("0000000000000000000000000")
                     tlMill = int(time.time())
-                
 
                 # if mode == 'publish':
                 #     print('Published topic %s: %s\n' % (topic, messageJson1))
