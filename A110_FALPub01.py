@@ -34,8 +34,8 @@ GPIO.setwarnings(False)
 IO_05_AL = 13 
 IO_13_TB = 5
 
-trMill = 0,
-tlMill = 0,
+trMill = 0
+tlMill = 0
 
 GPIO.setup(IO_05_AL, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IO_13_TB, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -135,19 +135,22 @@ with open('A110_FAL.json', 'r') as file:
 if __name__ == '__main__':
     try:
         while True:
+            Alarm = 0
+            time.sleep(1)
             temperature = get_cpu_temperature()
             if temperature is not None:
-                print(f"CPU Temperature: {temperature}°C")
+                #print(f"CPU Temperature: {temperature}°C")
                 json_data1['devices'][0]['tags'][0]['value']=temperature-12
             else:
-                print("Failed to read CPU temperature.")
+                #print("Failed to read CPU temperature.")
 
             if mode == 'both' or mode == 'publish':
                 # print("################")
                 # print(json_data1['devices'][0]['tags'][2])
                 # print("################")
                 trMill = int(time.time() * 1000)
-                if GPIO.input(IO_05_AL) == 0:
+                if GPIO.input(IO_05_AL) == 0 and Alarm != 2:
+                    Alarm = 1
                     json_data1['devices'][1]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY"
                 else:
                     json_data1['devices'][1]['tags'][2]['value']=""
@@ -156,11 +159,23 @@ if __name__ == '__main__':
                 else:
                     json_data1['devices'][1]['tags'][3]['value']=""
 
-                if tlMill-trMill>30:
+                if Alarm == 1:
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
                     tlMill = int(time.time() * 1000)
-                    time.sleep(30)
+                    Alarm = 2
+                elif Alarm == 2 and GPIO.input(IO_05_AL) != 0:
+                    json_data1['devices'][1]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY_Restore"
+                    messageJson1 = json.dumps(json_data1)
+                    myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    tlMill = int(time.time() * 1000)
+                    json_data1['devices'][1]['tags'][2]['value']=""
+                    Alarm = 3
+                if (trMill-tlMill)>30:
+                    messageJson1 = json.dumps(json_data1)
+                    myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    tlMill = int(time.time() * 1000)
+                
 
                 # if mode == 'publish':
                 #     print('Published topic %s: %s\n' % (topic, messageJson1))
