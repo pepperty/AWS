@@ -104,7 +104,7 @@ time.sleep(2)
 
 # Publish to the same topic in a loop forever
 # Read data from JSON file
-with open('BPU_2L31.json', 'r') as file:
+with open('AWS\BPU_2L31.json', 'r') as file:
     json_data1 = json.load(file)
 # print(json_data)
 while True:
