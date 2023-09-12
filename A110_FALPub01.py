@@ -65,9 +65,9 @@ def customCallback(client, userdata, message):
 # privateKeyPath = "certs/private.pem.key"
 
 host = "a1x0dm3q26289z-ats.iot.ap-southeast-1.amazonaws.com"
-rootCAPath = "certsP/AmazonRootCA1.pem"
-certificatePath = "certsP/device.pem.crt"
-privateKeyPath = "certsP/private.pem.key"
+rootCAPath = "/home/DEV01/AWS/certsP/AmazonRootCA1.pem"
+certificatePath = "/home/DEV01/AWS/certsP/device.pem.crt"
+privateKeyPath = "/home/DEV01/AWS/certsP/private.pem.key"
 
 port = 8883
 useWebsocket = False
@@ -129,7 +129,7 @@ def get_cpu_temperature():
 
 # Publish to the same topic in a loop forever
 # Read data from JSON file
-with open('A110_FAL.json', 'r') as file:
+with open('/home/DEV01/AWS/A110_FAL.json', 'r') as file:
     json_data1 = json.load(file)
 # print(json_data)
 if __name__ == '__main__':
@@ -137,10 +137,10 @@ if __name__ == '__main__':
         Alarm = 0
         while True:
             time.sleep(1)
-            temperature = get_cpu_temperature()
+            temperature = get_cpu_temperature()-12
             if temperature is not None:
                 #print(f"CPU Temperature: {temperature}°C")
-                json_data1['devices'][0]['tags'][0]['value']=temperature-12
+                json_data1['devices'][0]['tags'][0]['value']= round(temperature,2)
             else:
                 #print("Failed to read CPU temperature.")
                 json_data1['devices'][0]['tags'][0]['value']=""
@@ -185,7 +185,6 @@ if __name__ == '__main__':
                         json_data1['devices'][1]['tags'][2]['value']=""
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
-                    print('Published topic %s: %s\n' % (topic, messageJson1))
                     print("0000000000000000000000000")
                     tlMill = int(time.time())
 
