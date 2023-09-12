@@ -135,6 +135,7 @@ if __name__ == '__main__':
             temperature = get_cpu_temperature()
             if temperature is not None:
                 print(f"CPU Temperature: {temperature}°C")
+                json_data1['devices'][0]['tags'][0]['value']=temperature-15
             else:
                 print("Failed to read CPU temperature.")
 
@@ -143,20 +144,18 @@ if __name__ == '__main__':
                 # print(json_data1['devices'][0]['tags'][2])
                 # print("################")
                 if GPIO.input(IO_05_AL) == 0:
-                    print("AL")
-                    json_data1['devices'][0]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY"
+                    json_data1['devices'][1]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY"
                 else:
-                    json_data1['devices'][0]['tags'][2]['value']=""
+                    json_data1['devices'][1]['tags'][2]['value']=""
                 if GPIO.input(IO_13_TB) == 0:
-                    print("TB")
-                    json_data1['devices'][0]['tags'][3]['value']="Trouble"
+                    json_data1['devices'][1]['tags'][3]['value']="Trouble"
                 else:
-                    json_data1['devices'][0]['tags'][3]['value']=""
+                    json_data1['devices'][1]['tags'][3]['value']=""
+
                 messageJson1 = json.dumps(json_data1)
-                #messageJson1['devices']['tags']['value'] = str(35.00)
                 myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
-                if mode == 'publish':
-                    print('Published topic %s: %s\n' % (topic, messageJson1))
+                # if mode == 'publish':
+                #     print('Published topic %s: %s\n' % (topic, messageJson1))
             time.sleep(30)
         # Reset by pressing CTRL + C
     except KeyboardInterrupt:
