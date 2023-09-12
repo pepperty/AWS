@@ -164,12 +164,14 @@ if __name__ == '__main__':
                     Alarm = 2
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    print('Published topic %s: %s\n' % (topic, messageJson1))
                     print("11111111111111111111111111")
                     tlMill = int(time.time())
                 elif Alarm == 2 and GPIO.input(IO_05_AL) != 0:
                     json_data1['devices'][1]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY_Restore"
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    print('Published topic %s: %s\n' % (topic, messageJson1))
                     print("22222222222222222222222")
                     tlMill = int(time.time())
                     json_data1['devices'][1]['tags'][2]['value']=""
@@ -177,6 +179,7 @@ if __name__ == '__main__':
                 if (trMill-tlMill)>30:
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    print('Published topic %s: %s\n' % (topic, messageJson1))
                     print("0000000000000000000000000")
                     tlMill = int(time.time())
 
