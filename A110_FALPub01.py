@@ -25,14 +25,25 @@ import json
 import subprocess
 import platform
 
+# Pi IO
+import RPi.GPIO as GPIO
+# Define GPIO to use on Pi
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+IO_05_AL = 5 
+IO_13_TB = 13
+
+GPIO.setup(IO_05_AL, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(IO_13_TB, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 # Stop Node-RED
-if platform.system() == "Windows":
-    node_red_path = r'C:\Users\peppe\AppData\Roaming\npm\node-red.cmd'
-    subprocess.call(['taskkill', '/F', '/IM', 'node-red'])
-    subprocess.Popen([node_red_path])
-if platform.system() == "Linux":
-    subprocess.call(['killall', 'node-red'])
-    subprocess.Popen(['node-red'])
+# if platform.system() == "Windows":
+#     node_red_path = r'C:\Users\peppe\AppData\Roaming\npm\node-red.cmd'
+#     subprocess.call(['taskkill', '/F', '/IM', 'node-red'])
+#     subprocess.Popen([node_red_path])
+# if platform.system() == "Linux":
+#     subprocess.call(['killall', 'node-red'])
+#     subprocess.Popen(['node-red'])
 
 AllowedActions = ['both', 'publish', 'subscribe']
 
@@ -57,7 +68,7 @@ privateKeyPath = "certsP/private.pem.key"
 port = 8883
 useWebsocket = False
 clientId = "LIV24"
-topic = "iot/boosterpump"
+topic = "iot/firealarm"
 
 if not useWebsocket and (not certificatePath or not privateKeyPath):
     print("Missing credentials for authentication.")
@@ -102,15 +113,50 @@ if mode == 'both' or mode == 'subscribe':
     myAWSIoTMQTTClient.subscribe(topic, 1, customCallback)
 time.sleep(2)
 
+def get_cpu_temperature():
+    try:
+        result = subprocess.check_output(["vcgencmd", "measure_temp"])
+        temperature_str = result.decode("utf-8")
+        temperature = float(temperature_str.split("=")[1].split("'")[0])
+        return temperature
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None
+
 # Publish to the same topic in a loop forever
 # Read data from JSON file
-with open('AWS\BPU_2L31.json', 'r') as file:
+with open('AWS\A110_FAL.json', 'r') as file:
     json_data1 = json.load(file)
 # print(json_data)
-while True:
-    if mode == 'both' or mode == 'publish':
-        messageJson1 = json.dumps(json_data1)
-        myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
-        if mode == 'publish':
-            print('Published topic %s: %s\n' % (topic, messageJson1))
-    time.sleep(30)
+if __name__ == '__main__':
+    try:
+        while True:
+            temperature = get_cpu_temperature()
+            if temperature is not None:
+                print(f"CPU Temperature: {temperature}°C")
+            else:
+                print("Failed to read CPU temperature.")
+
+            if mode == 'both' or mode == 'publish':
+                # print("################")
+                # print(json_data1['devices'][0]['tags'][2])
+                # print("################")
+                json_data1['devices'][0]['tags'][0]['value']= CPUTemperature()
+                if GPIO.input(IO_05_AL) == 0:
+                    json_data1['devices'][1]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY"
+                if GPIO.input(IO_13_TB) == 0:
+                    json_data1['devices'][1]['tags'][3]['value']="Trouble"
+                messageJson1 = json.dumps(json_data1)
+                #messageJson1['devices']['tags']['value'] = str(35.00)
+                myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                if mode == 'publish':
+                    print('Published topic %s: %s\n' % (topic, messageJson1))
+            time.sleep(30)
+        # Reset by pressing CTRL + C
+    except KeyboardInterrupt:
+        print("Measurement stopped by User")
+        GPIO.cleanup()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        GPIO.cleanup()
+    GPIO.cleanup()

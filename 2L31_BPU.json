@@ -1,5 +1,5 @@
 {
-    "gateway": "2L31-BOOSTERPUMP-BPU B37",
+    "gateway": "2L31-BOOSTERPUMP-BPU B3702",
     "topic": "iot/boosterpump",
     "devices": [
       {
@@ -7,7 +7,7 @@
         "tags": [
           {
             "name": "Status",
-            "value": "",
+            "value": "Leak",
             "value_type": "STRING",
             "unit": ""
           },
@@ -24,7 +24,7 @@
         "tags": [
           {
             "name": "Status",
-            "value": "",
+            "value": "Leak",
             "value_type": "STRING",
             "unit": ""
           },
