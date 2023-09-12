@@ -13,7 +13,7 @@
           },
           {
             "name": "Tank Level",
-            "value": "",
+            "value": "10",
             "value_type": "INTEGER",
             "unit": "%"
           }
@@ -30,7 +30,7 @@
           },
           {
             "name": "Tank Level",
-            "value": "",
+            "value": "10",
             "value_type": "INTEGER",
             "unit": "%"
           }
