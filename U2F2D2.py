@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import os
 import time
+import statistics
 
 # Define GPIO to use on Pi
 GPIO.setmode(GPIO.BCM)
@@ -61,11 +62,24 @@ def measure(IO_TRIG,IO_EXC):
 
 if __name__ == '__main__':
     try:
+        Alast = 0
+        Blast = 0
         while True:
-            dist_A  = 0
-            dist_B  = 0
-            dist_A  = measure(IO_TRIG01,IO_EXC01)
-            dist_B  = measure(IO_TRIG02,IO_EXC02)
+            dist_A_list = []
+            dist_B_list = []
+
+            for i in range(10):
+                time.sleep(0.1)
+                Anow = measure(IO_TRIG01,IO_EXC01)
+                Bnow = measure(IO_TRIG02,IO_EXC02)
+                if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
+                    dist_A_list.append(Anow)
+                    Alast = Anow
+                if (Bnow - Blast <50 and Bnow - Blast > -50) or Blast == 0:
+                    dist_B_list.append(Bnow)
+                    Blast = Bnow
+            dist_A = statistics.mean(dist_A_list)
+            dist_B = statistics.mean(dist_B_list)
 
             if(dist_A > -1):
                 print("Measured Distance = %.1f cm" % dist_A)
@@ -92,7 +106,7 @@ if __name__ == '__main__':
                 print("DET02 Non Detect")
 
             # Add a small delay to avoid rapid readings
-            time.sleep(1)
+            
 
             
 
