@@ -191,7 +191,7 @@ if __name__ == '__main__':
             dist_A_list = []
             dist_B_list = []
             for i in range(10):
-                time.sleep(0.1)
+                time.sleep(0.2)
                 Anow = measure(IO_TRIG01,IO_EXC01)
                 Bnow = measure(IO_TRIG02,IO_EXC02)
                 if(Anow > -1):
@@ -200,6 +200,9 @@ if __name__ == '__main__':
                         Alast = Anow
                 else:
                     print("#UA")
+            
+            for i in range(10):
+                time.sleep(0.2)
                 if(Bnow > -1):
                     if (Bnow - Blast <50 and Bnow - Blast > -50) or Blast == 0:
                         dist_B_list.append(Bnow)
