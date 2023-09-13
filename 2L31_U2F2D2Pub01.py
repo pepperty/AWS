@@ -227,11 +227,11 @@ if __name__ == '__main__':
                     if DET01_state == GPIO.LOW:
                         json_data1['devices'][0]['tags'][0]['value'] = "Leak"
                     else:
-                        json_data1['devices'][0]['tags'][0]['value'] = ""
+                        json_data1['devices'][0]['tags'][0]['value'] = "Nomal"
                     if DET02_state == GPIO.LOW:
                         json_data1['devices'][1]['tags'][0]['value'] = "Leak"
                     else:
-                        json_data1['devices'][1]['tags'][0]['value'] = ""
+                        json_data1['devices'][1]['tags'][0]['value'] = "Nomal"
 
                     json_data1['devices'][0]['tags'][1]['value'] = dist_A
                     json_data1['devices'][1]['tags'][1]['value'] = dist_B
