@@ -193,6 +193,8 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 Anow = measure(IO_TRIG01,IO_EXC01)
                 Bnow = measure(IO_TRIG02,IO_EXC02)
+                print(Anow)
+                print(Bnow)
                 if(Anow > -1):
                     if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
                         dist_A_list.append(Anow)
