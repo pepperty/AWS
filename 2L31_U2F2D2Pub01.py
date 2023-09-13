@@ -235,8 +235,8 @@ if __name__ == '__main__':
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 0)
                     tlMill = int(time.time())
 
-                if mode == 'publish':
-                    print('Published topic %s: %s\n' % (topic, messageJson1))
+                    if mode == 'publish':
+                        print('Published topic %s: %s\n' % (topic, messageJson1))
         # Reset by pressing CTRL + C
     except KeyboardInterrupt:
         print("Measurement stopped by User")
