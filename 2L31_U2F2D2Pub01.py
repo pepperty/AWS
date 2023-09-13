@@ -209,9 +209,9 @@ if __name__ == '__main__':
                         Blast = Bnow
                 else:
                     print("#UB")
-            if len(dist_A_list>0)
+            if len(dist_A_list)>0:
                 dist_A = round(Max_Tank - statistics.mean(dist_A_list),3)
-            if len(dist_B_list>0)
+            if len(dist_B_list)>0:
                 dist_B = round(Max_Tank - statistics.mean(dist_B_list),3)
 
             # Read the state of the GPIO pin
