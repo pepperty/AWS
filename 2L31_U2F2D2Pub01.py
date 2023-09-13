@@ -193,24 +193,20 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 Anow = measure(IO_TRIG01,IO_EXC01)
                 Bnow = measure(IO_TRIG02,IO_EXC02)
-                if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
-                    dist_A_list.append(Anow)
-                    Alast = Anow
-                if (Bnow - Blast <50 and Bnow - Blast > -50) or Blast == 0:
-                    dist_B_list.append(Bnow)
-                    Blast = Bnow
+                if(Anow > -1):
+                    if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
+                        dist_A_list.append(Anow)
+                        Alast = Anow
+                else:
+                    print("#UA")
+                if(Bnow > -1):
+                    if (Bnow - Blast <50 and Bnow - Blast > -50) or Blast == 0:
+                        dist_B_list.append(Bnow)
+                        Blast = Bnow
+                else:
+                    print("#UB")
             dist_A = Max_Tank - statistics.mean(dist_A_list)
             dist_B = Max_Tank - statistics.mean(dist_B_list)
-
-            if(dist_A > -1):
-                print("Measured Distance = %.1f cm" % dist_A)
-            else:
-                print("#UA")
-            if(dist_B > -1):
-                print("Measured Distance = %.1f cm" % dist_A)
-            else:
-                print("#UB")
-            time.sleep(0.1)
 
             # Read the state of the GPIO pin
             DET01_state = GPIO.input(IO_DET01)
