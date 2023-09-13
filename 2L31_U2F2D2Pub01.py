@@ -187,14 +187,13 @@ if __name__ == '__main__':
         trMill = int(time.time())
         tlMill = int(time.time())
         while True:
+            time.sleep(1)
             dist_A_list = []
             dist_B_list = []
             for i in range(10):
                 time.sleep(0.1)
                 Anow = measure(IO_TRIG01,IO_EXC01)
                 Bnow = measure(IO_TRIG02,IO_EXC02)
-                print(Anow)
-                print(Bnow)
                 if(Anow > -1):
                     if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
                         dist_A_list.append(Anow)
@@ -207,8 +206,9 @@ if __name__ == '__main__':
                         Blast = Bnow
                 else:
                     print("#UB")
-            dist_A = Max_Tank - statistics.mean(dist_A_list)
-            dist_B = Max_Tank - statistics.mean(dist_B_list)
+            
+            dist_A = round(Max_Tank - statistics.mean(dist_A_list),3)
+            dist_B = round(Max_Tank - statistics.mean(dist_B_list),3)
 
             # Read the state of the GPIO pin
             DET01_state = GPIO.input(IO_DET01)
@@ -220,22 +220,18 @@ if __name__ == '__main__':
                 # print("################")
                 trMill = int(time.time())
                 if (trMill-tlMill)>30:
-                    print(json_data1['devices'][1]['tags'][1]['value'])
-                    print(json_data1['devices'][2]['tags'][1]['value'])
-                    print(json_data1['devices'][1]['tags'][2]['value'])
-                    print(json_data1['devices'][2]['tags'][2]['value'])
                     # Print the state (it should read LOW when the button is not pressed)
                     if DET01_state == GPIO.LOW:
-                        json_data1['devices'][1]['tags'][1]['value'] = "Leak"
+                        json_data1['devices'][0]['tags'][0]['value'] = "Leak"
                     else:
-                        json_data1['devices'][1]['tags'][1]['value'] = ""
+                        json_data1['devices'][0]['tags'][0]['value'] = ""
                     if DET02_state == GPIO.LOW:
-                        json_data1['devices'][2]['tags'][1]['value'] = "Leak"
+                        json_data1['devices'][1]['tags'][0]['value'] = "Leak"
                     else:
-                        json_data1['devices'][2]['tags'][1]['value'] = ""
+                        json_data1['devices'][1]['tags'][0]['value'] = ""
 
-                    json_data1['devices'][1]['tags'][2]['value'] = dist_A
-                    json_data1['devices'][2]['tags'][2]['value'] = dist_B
+                    json_data1['devices'][0]['tags'][1]['value'] = dist_A
+                    json_data1['devices'][1]['tags'][1]['value'] = dist_B
 
                     messageJson1 = json.dumps(json_data1)
                     myAWSIoTMQTTClient.publish(topic, messageJson1, 0)
