@@ -218,6 +218,10 @@ if __name__ == '__main__':
                 # print("################")
                 trMill = int(time.time())
                 if (trMill-tlMill)>30:
+                    print(json_data1['devices'][1]['tags'][1]['value'])
+                    print(json_data1['devices'][2]['tags'][1]['value'])
+                    print(json_data1['devices'][1]['tags'][2]['value'])
+                    print(json_data1['devices'][2]['tags'][2]['value'])
                     # Print the state (it should read LOW when the button is not pressed)
                     if DET01_state == GPIO.LOW:
                         json_data1['devices'][1]['tags'][1]['value'] = "Leak"
