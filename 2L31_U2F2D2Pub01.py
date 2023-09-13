@@ -184,6 +184,8 @@ if __name__ == '__main__':
         Alast = 0
         Blast = 0
         Max_Tank = 200
+        trMill = int(time.time())
+        tlMill = int(time.time())
         while True:
             dist_A_list = []
             dist_B_list = []
@@ -219,21 +221,20 @@ if __name__ == '__main__':
                 # print(json_data1['devices'][0]['tags'][2])
                 # print("################")
                 trMill = int(time.time())
+                    if (trMill-tlMill)>30:
+                    # Print the state (it should read LOW when the button is not pressed)
+                    if DET01_state == GPIO.LOW:
+                        json_data1['devices'][1]['tags'][1]['value'] = "Leak"
+                    else:
+                        json_data1['devices'][1]['tags'][1]['value'] = ""
+                    if DET02_state == GPIO.LOW:
+                        json_data1['devices'][2]['tags'][1]['value'] = "Leak"
+                    else:
+                        json_data1['devices'][2]['tags'][1]['value'] = ""
 
-                # Print the state (it should read LOW when the button is not pressed)
-                if DET01_state == GPIO.LOW:
-                    json_data1['devices'][1]['tags'][1]['value'] = "Leak"
-                else:
-                    json_data1['devices'][1]['tags'][1]['value'] = ""
-                if DET02_state == GPIO.LOW:
-                    json_data1['devices'][2]['tags'][1]['value'] = "Leak"
-                else:
-                    json_data1['devices'][2]['tags'][1]['value'] = ""
-
-                json_data1['devices'][1]['tags'][2]['value'] = DET01_state
-                json_data1['devices'][2]['tags'][2]['value'] = DET02_state
-
-                
+                    json_data1['devices'][1]['tags'][2]['value'] = dist_A
+                    json_data1['devices'][2]['tags'][2]['value'] = dist_B
+                    tlMill = int(time.time())
 
                 # if mode == 'publish':
                 #     print('Published topic %s: %s\n' % (topic, messageJson1))
