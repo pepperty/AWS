@@ -230,6 +230,9 @@ if __name__ == '__main__':
 
                     json_data1['devices'][1]['tags'][2]['value'] = dist_A
                     json_data1['devices'][2]['tags'][2]['value'] = dist_B
+
+                    messageJson1 = json.dumps(json_data1)
+                    myAWSIoTMQTTClient.publish(topic, messageJson1, 0)
                     tlMill = int(time.time())
 
                 # if mode == 'publish':
