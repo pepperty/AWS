@@ -7,13 +7,13 @@
         "tags": [
           {
             "name": "Status",
-            "value": "Leak",
+            "value": "",
             "value_type": "STRING",
             "unit": ""
           },
           {
             "name": "Tank Level",
-            "value": "10",
+            "value": "",
             "value_type": "INTEGER",
             "unit": "%"
           }
@@ -24,13 +24,13 @@
         "tags": [
           {
             "name": "Status",
-            "value": "Leak",
+            "value": "",
             "value_type": "STRING",
             "unit": ""
           },
           {
             "name": "Tank Level",
-            "value": "10",
+            "value": "",
             "value_type": "INTEGER",
             "unit": "%"
           }

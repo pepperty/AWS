@@ -17,6 +17,7 @@
  # PJ:XT PYT_BPU_Tank
 
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
+
 import logging
 import time
 import json
@@ -25,6 +26,67 @@ import json
 import subprocess
 import platform
 
+import RPi.GPIO as GPIO
+import os
+import time
+import statistics
+
+# Define GPIO to use on Pi
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+IO_DET01 = 18
+IO_DET02= 23
+IO_EXC01 = 24
+IO_EXC02 = 25
+IO_TRIG01= 8
+IO_TRIG02 = 7
+IO_REL01 = 12
+IO_REL02 = 16
+
+# ULtrasonic trigger time
+TRIGGER_TIME = 0.00001
+MAX_TIME = 0.05  # max time waiting for response in case something is missed
+
+GPIO.setup(IO_DET01, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(IO_DET02, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(IO_EXC01, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(IO_EXC02, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(IO_TRIG01, GPIO.OUT)
+GPIO.setup(IO_TRIG02, GPIO.OUT)
+GPIO.setup(IO_REL01, GPIO.OUT)
+GPIO.setup(IO_REL02, GPIO.OUT)
+
+# This function measures a distance
+def measure(IO_TRIG,IO_EXC):
+    # Pulse the trigger/echo line to initiate a measurement
+    GPIO.output(IO_TRIG, True)
+    time.sleep(TRIGGER_TIME)
+    GPIO.output(IO_TRIG, False)
+
+    # ensure start time is set in case of very quick return
+    start = time.time()
+    timeout = start + MAX_TIME
+
+    # set line to input to check for start of echo response
+    while GPIO.input(IO_EXC) == 0 and start <= timeout:
+        start = time.time()
+
+    if(start > timeout):
+        return -1
+
+    stop = time.time()
+    timeout = stop + MAX_TIME
+    # Wait for end of echo response
+    while GPIO.input(IO_EXC) == 1 and stop <= timeout:
+        stop = time.time()
+
+    if(stop <= timeout):
+        elapsed = stop-start
+        distance = float(elapsed * 34300)/2.0
+    else:
+        return -1
+    return distance
 # Stop Node-RED
 # if platform.system() == "Windows":
 #     node_red_path = r'C:\Users\peppe\AppData\Roaming\npm\node-red.cmd'
@@ -50,14 +112,14 @@ def customCallback(client, userdata, message):
 # privateKeyPath = "certs/private.pem.key"
 
 host = "a1x0dm3q26289z-ats.iot.ap-southeast-1.amazonaws.com"
-rootCAPath = "certsP/AmazonRootCA1.pem"
-certificatePath = "certsP/device.pem.crt"
-privateKeyPath = "certsP/private.pem.key"
+rootCAPath = "/home/DEV01/AWS/certsP/AmazonRootCA1.pem"
+certificatePath = "/home/DEV01/AWS/certsP/device.pem.crt"
+privateKeyPath = "/home/DEV01/AWS/certsP/private.pem.key"
 
 port = 8883
 useWebsocket = False
 clientId = "LIV24"
-topic = "iot/boosterpump"
+topic = "iot/firealarm"
 
 if not useWebsocket and (not certificatePath or not privateKeyPath):
     print("Missing credentials for authentication.")
@@ -102,15 +164,84 @@ if mode == 'both' or mode == 'subscribe':
     myAWSIoTMQTTClient.subscribe(topic, 1, customCallback)
 time.sleep(2)
 
+def get_cpu_temperature():
+    try:
+        result = subprocess.check_output(["vcgencmd", "measure_temp"])
+        temperature_str = result.decode("utf-8")
+        temperature = float(temperature_str.split("=")[1].split("'")[0])
+        return temperature
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None
+
 # Publish to the same topic in a loop forever
 # Read data from JSON file
-with open('AWS\2L31_PU.json', 'r') as file:
+with open('/home/DEV01/AWS/2L31_BPU.json', 'r') as file:
     json_data1 = json.load(file)
 # print(json_data)
-while True:
-    if mode == 'both' or mode == 'publish':
-        messageJson1 = json.dumps(json_data1)
-        myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
-        if mode == 'publish':
-            print('Published topic %s: %s\n' % (topic, messageJson1))
-    time.sleep(30)
+if __name__ == '__main__':
+    try:
+        Alast = 0
+        Blast = 0
+        Max_Tank = 200
+        while True:
+            dist_A_list = []
+            dist_B_list = []
+            for i in range(10):
+                time.sleep(0.1)
+                Anow = measure(IO_TRIG01,IO_EXC01)
+                Bnow = measure(IO_TRIG02,IO_EXC02)
+                if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
+                    dist_A_list.append(Anow)
+                    Alast = Anow
+                if (Bnow - Blast <50 and Bnow - Blast > -50) or Blast == 0:
+                    dist_B_list.append(Bnow)
+                    Blast = Bnow
+            dist_A = Max_Tank - statistics.mean(dist_A_list)
+            dist_B = Max_Tank - statistics.mean(dist_B_list)
+
+            if(dist_A > -1):
+                print("Measured Distance = %.1f cm" % dist_A)
+            else:
+                print("#UA")
+            if(dist_B > -1):
+                print("Measured Distance = %.1f cm" % dist_A)
+            else:
+                print("#UB")
+            time.sleep(0.1)
+
+            # Read the state of the GPIO pin
+            DET01_state = GPIO.input(IO_DET01)
+            DET02_state = GPIO.input(IO_DET02)
+
+            if mode == 'both' or mode == 'publish':
+                # print("################")
+                # print(json_data1['devices'][0]['tags'][2])
+                # print("################")
+                trMill = int(time.time())
+
+                # Print the state (it should read LOW when the button is not pressed)
+                if DET01_state == GPIO.LOW:
+                    json_data1['devices'][1]['tags'][1]['value'] = "Leak"
+                else:
+                    json_data1['devices'][1]['tags'][1]['value'] = ""
+                if DET02_state == GPIO.LOW:
+                    json_data1['devices'][2]['tags'][1]['value'] = "Leak"
+                else:
+                    json_data1['devices'][2]['tags'][1]['value'] = ""
+
+                json_data1['devices'][1]['tags'][2]['value'] = DET01_state
+                json_data1['devices'][2]['tags'][2]['value'] = DET02_state
+
+                
+
+                # if mode == 'publish':
+                #     print('Published topic %s: %s\n' % (topic, messageJson1))
+        # Reset by pressing CTRL + C
+    except KeyboardInterrupt:
+        print("Measurement stopped by User")
+        GPIO.cleanup()
+    # except Exception as e:
+    #     print(f"An error occurred: {e}")
+    #     GPIO.cleanup()
+    GPIO.cleanup()
