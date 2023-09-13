@@ -212,7 +212,7 @@ if __name__ == '__main__':
             if len(dist_A_list)>0:
                 dist_A = round(Max_Tank - statistics.mean(dist_A_list),3)
             if len(dist_B_list)>0:
-                dist_B = round(Max_Tank - statistics.mean(dist_B_list)+68,3)
+                dist_B = round(Max_Tank - statistics.mean(dist_B_list),3)+68
 
             # Read the state of the GPIO pin
             DET01_state = GPIO.input(IO_DET01)
