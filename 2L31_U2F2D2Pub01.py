@@ -193,7 +193,6 @@ if __name__ == '__main__':
             for i in range(10):
                 time.sleep(0.2)
                 Anow = measure(IO_TRIG01,IO_EXC01)
-                Bnow = measure(IO_TRIG02,IO_EXC02)
                 if(Anow > -1):
                     if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
                         dist_A_list.append(Anow)
@@ -203,15 +202,17 @@ if __name__ == '__main__':
             
             for i in range(10):
                 time.sleep(0.2)
+                Bnow = measure(IO_TRIG02,IO_EXC02)
                 if(Bnow > -1):
                     if (Bnow - Blast <50 and Bnow - Blast > -50) or Blast == 0:
                         dist_B_list.append(Bnow)
                         Blast = Bnow
                 else:
                     print("#UB")
-            
-            dist_A = round(Max_Tank - statistics.mean(dist_A_list),3)
-            dist_B = round(Max_Tank - statistics.mean(dist_B_list),3)
+            if len(dist_A_list>0)
+                dist_A = round(Max_Tank - statistics.mean(dist_A_list),3)
+            if len(dist_B_list>0)
+                dist_B = round(Max_Tank - statistics.mean(dist_B_list),3)
 
             # Read the state of the GPIO pin
             DET01_state = GPIO.input(IO_DET01)
