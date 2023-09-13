@@ -19,8 +19,8 @@ IO_REL02 = 16
 TRIGGER_TIME = 0.00001
 MAX_TIME = 0.05  # max time waiting for response in case something is missed
 
-GPIO.setup(IO_DET01, GPIO.IN, pull_up_down=GPIO.PUD_Down)
-GPIO.setup(IO_DET02, GPIO.IN, pull_up_down=GPIO.PUD_Down)
+GPIO.setup(IO_DET01, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(IO_DET02, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IO_EXC01, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IO_EXC02, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IO_TRIG01, GPIO.OUT)
@@ -82,17 +82,17 @@ if __name__ == '__main__':
             DET02_state = GPIO.input(IO_DET02)
 
             # Print the state (it should read LOW when the button is not pressed)
-            if DET01_state == GPIO.HIGH:
+            if DET01_state == GPIO.LOW:
                 print("DET01 Detect")
             else:
                 print("DET01 Non Detect")
-            if DET02_state == GPIO.HIGH:
+            if DET02_state == GPIO.LOW:
                 print("DET02 Detect")
             else:
                 print("DET02 Non Detect")
 
             # Add a small delay to avoid rapid readings
-            time.sleep(0.1)
+            time.sleep(1)
 
             
 

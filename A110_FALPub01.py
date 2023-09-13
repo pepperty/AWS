@@ -137,7 +137,7 @@ if __name__ == '__main__':
         Alarm = 0
         while True:
             time.sleep(1)
-            temperature = get_cpu_temperature()-12
+            temperature = get_cpu_temperature()-15
             if temperature is not None:
                 #print(f"CPU Temperature: {temperature}°C")
                 json_data1['devices'][0]['tags'][0]['value']= round(temperature,2)
@@ -163,7 +163,7 @@ if __name__ == '__main__':
                 if Alarm == 1:
                     Alarm = 2
                     messageJson1 = json.dumps(json_data1)
-                    myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    myAWSIoTMQTTClient.publish(topic, messageJson1, 0)
                     print('Published topic %s: %s\n' % (topic, messageJson1))
                     print("11111111111111111111111111")
                     time.sleep(5)
@@ -171,7 +171,7 @@ if __name__ == '__main__':
                 elif Alarm == 2 and GPIO.input(IO_05_AL) != 0:
                     json_data1['devices'][1]['tags'][2]['value']="Z1_DZ_1_FL1_LOBBY_Restore"
                     messageJson1 = json.dumps(json_data1)
-                    myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    myAWSIoTMQTTClient.publish(topic, messageJson1, 0)
                     print('Published topic %s: %s\n' % (topic, messageJson1))
                     print("22222222222222222222222")
                     time.sleep(5)
@@ -184,7 +184,7 @@ if __name__ == '__main__':
                     else:
                         json_data1['devices'][1]['tags'][2]['value']=""
                     messageJson1 = json.dumps(json_data1)
-                    myAWSIoTMQTTClient.publish(topic, messageJson1, 1)
+                    myAWSIoTMQTTClient.publish(topic, messageJson1, 0)
                     print("0000000000000000000000000")
                     tlMill = int(time.time())
 
