@@ -200,6 +200,7 @@ if __name__ == '__main__':
                     dist_A_list.append(Anow)
                     Alast = Anow
                 else:
+                    dist_A_list.append(0)
                     print("#UA")
 
                 Bnow = measure(IO_TRIG02,IO_EXC02)
@@ -208,9 +209,10 @@ if __name__ == '__main__':
                     dist_B_list.append(Bnow)
                     Blast = Bnow
                 else:
+                    dist_B_list.append(0)
                     print("#UB")
             if len(dist_A_list)>0:
-                dist_A = round(min(dist_A_list)-780,3)
+                dist_A = round(min(dist_A_list),3)
             if len(dist_B_list)>0:
                 dist_B = round(min(dist_B_list),3)
 
