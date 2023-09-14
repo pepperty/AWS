@@ -220,6 +220,8 @@ if __name__ == '__main__':
             DET01_state = GPIO.input(IO_DET01)
             DET02_state = GPIO.input(IO_DET02)
             print("################")
+            print(Anow)
+            print(Bnow)
             print(dist_A)
             print(dist_B)
             print(DET01_state)
