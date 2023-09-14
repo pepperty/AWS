@@ -46,7 +46,7 @@ IO_REL02 = 16
 
 # ULtrasonic trigger time
 TRIGGER_TIME = 0.00001
-MAX_TIME = 0.05  # max time waiting for response in case something is missed
+MAX_TIME = 0.07  # max time waiting for response in case something is missed
 
 GPIO.setup(IO_DET01, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IO_DET02, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -196,17 +196,17 @@ if __name__ == '__main__':
                 time.sleep(1)
                 Anow = measure(IO_TRIG01,IO_EXC01)-780
                 if(Anow > -1):
-                    if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
-                        dist_A_list.append(Anow)
-                        Alast = Anow
+                    #if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
+                    dist_A_list.append(Anow)
+                    Alast = Anow
                 else:
                     print("#UA")
 
                 Bnow = measure(IO_TRIG02,IO_EXC02)
                 if(Bnow > -1):
-                    if (Bnow - Blast <50 and Bnow - Blast > -50) or Blast == 0:
-                        dist_B_list.append(Bnow)
-                        Blast = Bnow
+                    #if (Bnow - Blast <50 and Bnow - Blast > -50) or Blast == 0:
+                    dist_B_list.append(Bnow)
+                    Blast = Bnow
                 else:
                     print("#UB")
             if len(dist_A_list)>0:
