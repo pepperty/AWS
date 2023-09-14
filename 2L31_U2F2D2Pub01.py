@@ -46,10 +46,10 @@ IO_REL02 = 16
 
 # ULtrasonic trigger time
 TRIGGER_TIME = 0.00001
-MAX_TIME = 0.07  # max time waiting for response in case something is missed
+MAX_TIME = 0.05  # max time waiting for response in case something is missed
 
-GPIO.setup(IO_DET01, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(IO_DET02, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(IO_DET01, GPIO.IN)
+GPIO.setup(IO_DET02, GPIO.IN)
 GPIO.setup(IO_EXC01, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IO_EXC02, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IO_TRIG01, GPIO.OUT)
