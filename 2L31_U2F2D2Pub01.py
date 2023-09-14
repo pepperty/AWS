@@ -191,7 +191,7 @@ if __name__ == '__main__':
             dist_A_list = []
             dist_B_list = []
             for i in range(10):
-                time.sleep(0.2)
+                time.sleep(1)
                 Anow = measure(IO_TRIG01,IO_EXC01)
                 if(Anow > -1):
                     if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
@@ -199,9 +199,7 @@ if __name__ == '__main__':
                         Alast = Anow
                 else:
                     print("#UA")
-            
-            for i in range(10):
-                time.sleep(0.2)
+
                 Bnow = measure(IO_TRIG02,IO_EXC02)
                 if(Bnow > -1):
                     if (Bnow - Blast <50 and Bnow - Blast > -50) or Blast == 0:
@@ -210,13 +208,19 @@ if __name__ == '__main__':
                 else:
                     print("#UB")
             if len(dist_A_list)>0:
-                dist_A = round(Max_Tank - statistics.mean(dist_A_list),3)
+                dist_A = round(statistics.min(dist_A_list),3)
             if len(dist_B_list)>0:
-                dist_B = round(Max_Tank - statistics.mean(dist_B_list),3)+68
+                dist_B = round(statistics.min(dist_B_list),3)
 
             # Read the state of the GPIO pin
             DET01_state = GPIO.input(IO_DET01)
             DET02_state = GPIO.input(IO_DET02)
+            print("################")
+            print(Anow)
+            print(Bnow)
+            print(DET01_state)
+            print(DET02_state)
+            print("################")
 
             if mode == 'both' or mode == 'publish':
                 # print("################")
