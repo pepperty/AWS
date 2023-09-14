@@ -183,6 +183,8 @@ if __name__ == '__main__':
     try:
         Alast = 0
         Blast = 0
+        dist_A = 0
+        dist_B = 0
         Max_Tank = 200
         trMill = int(time.time())
         tlMill = int(time.time())
