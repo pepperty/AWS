@@ -194,7 +194,7 @@ if __name__ == '__main__':
             dist_B_list = []
             for i in range(10):
                 time.sleep(1)
-                Anow = measure(IO_TRIG01,IO_EXC01)
+                Anow = measure(IO_TRIG01,IO_EXC01)-780
                 if(Anow > -1):
                     if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
                         dist_A_list.append(Anow)
