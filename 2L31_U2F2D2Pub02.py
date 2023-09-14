@@ -176,7 +176,7 @@ def get_cpu_temperature():
 
 # Publish to the same topic in a loop forever
 # Read data from JSON file
-with open('/home/DEV01/AWS/2L31_BPU.json', 'r') as file:
+with open('/home/DEV01/AWS/2L31_BPU02.json', 'r') as file:
     json_data1 = json.load(file)
 # print(json_data)
 if __name__ == '__main__':
