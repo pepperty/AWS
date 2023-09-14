@@ -194,7 +194,7 @@ if __name__ == '__main__':
             dist_B_list = []
             for i in range(10):
                 time.sleep(1)
-                Anow = measure(IO_TRIG01,IO_EXC01)-780
+                Anow = measure(IO_TRIG01,IO_EXC01)
                 if(Anow > -1):
                     #if (Anow - Alast <50 and Anow - Alast > -50) or Alast == 0:
                     dist_A_list.append(Anow)
@@ -210,7 +210,7 @@ if __name__ == '__main__':
                 else:
                     print("#UB")
             if len(dist_A_list)>0:
-                dist_A = round(min(dist_A_list),3)
+                dist_A = round(min(dist_A_list)-780,3)
             if len(dist_B_list)>0:
                 dist_B = round(min(dist_B_list),3)
 
